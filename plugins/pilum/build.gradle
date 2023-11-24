@@ -1,0 +1,62 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    compileSdk versions.compileSdk
+
+    defaultConfig {
+        minSdk versions.minSdk
+        targetSdk versions.targetSdk
+        versionCode 1
+        versionName "1.0"
+    }
+
+    namespace = "hastatus.godot.plugin.android.pilum"
+
+    // Used to customize the name of generated AAR file.
+    libraryVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
+            output.outputFileName = "Pilum.${variant.name}.aar"
+        }
+    }
+
+}
+
+dependencies {
+    compileOnly libraries.godotAndroidLib
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlinVersion"
+
+    implementation platform('com.google.firebase:firebase-bom:32.3.1')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation "com.google.android.gms:play-services-ads:22.5.0"
+
+}
+
+tasks.register('copyDebugAARToDemoAddons', Copy) {
+    from 'build/outputs/aar'
+    include 'Pilum.debug.aar'
+    into 'demo/addons/pilum_plugin/bin/debug'
+}
+
+tasks.register('copyReleaseAARToDemoAddons', Copy) {
+    from 'build/outputs/aar'
+    include 'Pilum.release.aar'
+    into 'demo/addons/pilum_plugin/bin/release'
+}
+
+tasks.register('copyAddonsToDemo', Copy) {
+    finalizedBy(copyDebugAARToDemoAddons)
+    finalizedBy(copyReleaseAARToDemoAddons)
+
+    doFirst {
+        delete('demo/addons/pilum_plugin')
+    }
+    from 'src/main/assets/addons/pilum_plugin'
+    into 'demo/addons/pilum_plugin'
+}
+
+assemble.finalizedBy(copyAddonsToDemo)
+assemble.finalizedBy(copyDebugAARToDemoAddons)
+assemble.finalizedBy(copyReleaseAARToDemoAddons)

@@ -16,6 +16,5 @@ dependencyResolutionManagement {
         maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/"}
     }
 }
-rootProject.name = "Godot Android Samples"
-include ':plugins:hello_world', ':plugins:hello_signals', ':plugins:hello_gdextension'
-include ':apps:gltf_viewer'
+rootProject.name = "Godot Android Plugins"
+include ':plugins:pilum'
