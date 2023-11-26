@@ -158,44 +158,47 @@ public class PilumPlugin extends GodotPlugin {
   }
   @UsedByGodot
   private void showAdIntersticialLoaded() {
-    mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
-      @Override
-      public void onAdClicked() {
-        emitSignal(SIGNAL_ADMOB_INTERSTITIAL_CLICKED);
-        // Called when a click is recorded for an ad.
-
-      }
-
-      @Override
-      public void onAdDismissedFullScreenContent() {
-        // Called when ad is dismissed.
-        // Set the ad reference to null so you don't show the ad a second time.
-        emitSignal(SIGNAL_ADMOB_INTERSTITIAL_DISMISSED_FULLSCREEN_CONTENT);
-        mInterstitialAd = null;
-      }
-
-      @Override
-      public void onAdFailedToShowFullScreenContent(AdError adError) {
-        // Called when ad fails to show.
-        emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAILED_TO_SHOW_FULLSCREEN_CONTENT, adError.getCode(), adError.getCause(), adError.getMessage());
-        mInterstitialAd = null;
-      }
-
-      @Override
-      public void onAdImpression() {
-        // Called when an impression is recorded for an ad.
-        emitSignal(SIGNAL_ADMOB_INTERSTITIAL_IMPRESSION);
-      }
-
-      @Override
-      public void onAdShowedFullScreenContent() {
-        // Called when ad is shown.
-        emitSignal(SIGNAL_ADMOB_INTERSTITIAL_SHOWED_FULLSCREEN_CONTENT);
-      }
-    });
 
     if (mInterstitialAd != null) {
+      mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+        @Override
+        public void onAdClicked() {
+          emitSignal(SIGNAL_ADMOB_INTERSTITIAL_CLICKED);
+          // Called when a click is recorded for an ad.
+
+        }
+
+        @Override
+        public void onAdDismissedFullScreenContent() {
+          // Called when ad is dismissed.
+          // Set the ad reference to null so you don't show the ad a second time.
+          emitSignal(SIGNAL_ADMOB_INTERSTITIAL_DISMISSED_FULLSCREEN_CONTENT);
+          mInterstitialAd = null;
+        }
+
+        @Override
+        public void onAdFailedToShowFullScreenContent(AdError adError) {
+          // Called when ad fails to show.
+          emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAILED_TO_SHOW_FULLSCREEN_CONTENT, adError.getCode(), adError.getCause(), adError.getMessage());
+          mInterstitialAd = null;
+        }
+
+        @Override
+        public void onAdImpression() {
+          // Called when an impression is recorded for an ad.
+          emitSignal(SIGNAL_ADMOB_INTERSTITIAL_IMPRESSION);
+        }
+
+        @Override
+        public void onAdShowedFullScreenContent() {
+          // Called when ad is shown.
+          emitSignal(SIGNAL_ADMOB_INTERSTITIAL_SHOWED_FULLSCREEN_CONTENT);
+        }
+      });
+
       getActivity().runOnUiThread(()-> mInterstitialAd.show(getActivity()));
+
+
     } else {
       emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_SHOW);
     }
@@ -211,26 +214,38 @@ public class PilumPlugin extends GodotPlugin {
   }
 
   @UsedByGodot
-  private void registerEventLoseBasicMatch(String dificuldade, String cenario, int pontosJogador, int pontosAdversario, int acertosBolinha, int errosBolinha) {
+  private void registerEventLoseBasicMatch(String dificuldade, String cenario, int pontosJogador, int pontosAdversario, int acertosBolinha, int tentativasAcertarBolinha) {
     Bundle params = new Bundle();
     params.putString("dificuldade", dificuldade);
     params.putString("cenario", cenario);
     params.putInt("pontos_jogador", pontosJogador);
     params.putInt("pontos_adversario", pontosAdversario);
     params.putInt("acertos_bolinha", acertosBolinha);
-    params.putInt("erros_bolinha", errosBolinha);
+    params.putInt("tentativas_acertar_bolinha", tentativasAcertarBolinha);
     firebaseAnalytics.logEvent("PERDEU_PARTIDA_BASICA", params);
   }
 
   @UsedByGodot
-  private void registerEventWinBasicMatch(String dificuldade, String cenario, int pontosJogador, int pontosAdversario, int acertosBolinha, int errosBolinha) {
+  private void registerEventAbandonBasicMatch(String dificuldade, String cenario, int pontosJogador, int pontosAdversario, int acertosBolinha, int tentativasAcertarBolinha) {
     Bundle params = new Bundle();
     params.putString("dificuldade", dificuldade);
     params.putString("cenario", cenario);
     params.putInt("pontos_jogador", pontosJogador);
     params.putInt("pontos_adversario", pontosAdversario);
     params.putInt("acertos_bolinha", acertosBolinha);
-    params.putInt("erros_bolinha", errosBolinha);
+    params.putInt("tentativas_acertar_bolinha", tentativasAcertarBolinha);
+    firebaseAnalytics.logEvent("ABANDONOU_PARTIDA_BASICA", params);
+  }
+
+  @UsedByGodot
+  private void registerEventWinBasicMatch(String dificuldade, String cenario, int pontosJogador, int pontosAdversario, int acertosBolinha, int tentativasAcertarBolinha) {
+    Bundle params = new Bundle();
+    params.putString("dificuldade", dificuldade);
+    params.putString("cenario", cenario);
+    params.putInt("pontos_jogador", pontosJogador);
+    params.putInt("pontos_adversario", pontosAdversario);
+    params.putInt("acertos_bolinha", acertosBolinha);
+    params.putInt("tentativas_acertar_bolinha", tentativasAcertarBolinha);
     firebaseAnalytics.logEvent("GANHOU_PARTIDA_BASICA", params);
   }
 
