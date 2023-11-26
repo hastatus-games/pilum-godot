@@ -73,6 +73,16 @@ func registerEventLoseBasicMatch(dificuldade:String, cenario:String, pontosJogad
 	return success
 
 
+func registerEventAbandonBasicMatch(dificuldade:String, cenario:String, pontosJogador:int, pontosAdversario:int, acertosBolinha:int, errosBolinha:int)->bool:
+	var success = true;
+	if _pilum_singleton:
+		_pilum_singleton.registerEventAbandonBasicMatch(dificuldade, cenario, pontosJogador, pontosAdversario, acertosBolinha, errosBolinha)
+	else:
+		printerr("Unable to registerEventAbandonBasicMatch")
+		success = false
+
+	return success
+
 func registerEventWinBasicMatch(dificuldade:String, cenario:String, pontosJogador:int, pontosAdversario:int, acertosBolinha:int, errosBolinha:int)->bool:
 	var success = true;
 	if _pilum_singleton:
