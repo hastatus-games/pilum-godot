@@ -46,17 +46,6 @@ tasks.register('copyReleaseAARToDemoAddons', Copy) {
     into 'demo/addons/pilum_plugin/bin/release'
 }
 
-tasks.register('copyAddonsToDemo', Copy) {
-    finalizedBy(copyDebugAARToDemoAddons)
-    finalizedBy(copyReleaseAARToDemoAddons)
 
-    doFirst {
-        delete('demo/addons/pilum_plugin')
-    }
-    from 'src/main/assets/addons/pilum_plugin'
-    into 'demo/addons/pilum_plugin'
-}
-
-assemble.finalizedBy(copyAddonsToDemo)
 assemble.finalizedBy(copyDebugAARToDemoAddons)
 assemble.finalizedBy(copyReleaseAARToDemoAddons)

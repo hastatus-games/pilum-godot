@@ -16,5 +16,5 @@ dependencyResolutionManagement {
         maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/"}
     }
 }
-rootProject.name = "Godot Android Plugins"
+rootProject.name = "Pilum Plugin"
 include ':plugins:pilum'

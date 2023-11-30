@@ -62,7 +62,7 @@ public class PilumPlugin extends GodotPlugin {
 
     signals.add(new SignalInfo(SIGNAL_ADMOB_INIT_COMPLETE));
     signals.add(new SignalInfo(SIGNAL_ADMOB_INTERSTITIAL_LOADED));
-    signals.add(new SignalInfo(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD));
+    signals.add(new SignalInfo(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, Integer.class, String.class, String.class));
     signals.add(new SignalInfo(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_SHOW));
 
     signals.add(new SignalInfo(SIGNAL_ADMOB_INTERSTITIAL_CLICKED));
@@ -141,11 +141,13 @@ public class PilumPlugin extends GodotPlugin {
                 public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                   // Handle the error
                   mInterstitialAd = null;
-                  emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, loadAdError.getCode(), loadAdError.getCause(), loadAdError.getMessage());
+                  emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, Integer.valueOf(loadAdError.getCode()), loadAdError.getCause(), loadAdError.getMessage());
 
                 }
               });
     });
+
+    emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, Integer.valueOf(-42), "Admob disabled", "Pilum is not using Admob yet");
 
 
   }
@@ -202,6 +204,7 @@ public class PilumPlugin extends GodotPlugin {
     } else {
       emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_SHOW);
     }
+    emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_SHOW);
   }
 
 
