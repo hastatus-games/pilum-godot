@@ -94,10 +94,10 @@ func registerEventWinBasicMatch(dificuldade:String, cenario:String, pontosJogado
 	return success
 
 
-func registerEvent(event_name:String, params_string:Dictionary, params_ints:Dictionary)->bool:
+func registerEvent(event_name:String, params:Dictionary)->bool:
 	var success = true;
 	if _pilum_singleton:
-		_pilum_singleton.registerEvent(event_name, params_string, params_ints)
+		_pilum_singleton.registerEvent(event_name, params)
 	else:
 		printerr("Unable to registerEvent")
 		success = false

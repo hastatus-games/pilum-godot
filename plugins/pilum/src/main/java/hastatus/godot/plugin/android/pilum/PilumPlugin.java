@@ -255,21 +255,34 @@ public class PilumPlugin extends GodotPlugin {
 
 
   @UsedByGodot
-  private void registerEvent(String eventName, Map<String, String> paramsString, Map<String, Integer> paramsInteger) {
+  private void registerEvent(String eventName, org.godotengine.godot.Dictionary params) {
     Bundle bundle = new Bundle();
 
-
-    if(paramsInteger!=null) {
-      for(Map.Entry<String, Integer> entry : paramsInteger.entrySet()) {
-        bundle.putInt(entry.getKey(), entry.getValue());
+    if(params!=null) {
+      Set<Map.Entry<String, Object>> entrySet = params.entrySet();
+      for (Map.Entry<String, Object> entry : entrySet) {
+        if(entry.getValue() instanceof String) {
+          bundle.putString(entry.getKey(), (String)entry.getValue());
+        }
+        else if(entry.getValue() instanceof Integer) {
+          bundle.putInt(entry.getKey(), (Integer)entry.getValue());
+        }
+        else if(entry.getValue() instanceof Boolean) {
+          bundle.putBoolean(entry.getKey(), (Boolean) entry.getValue());
+        }
+        else if(entry.getValue() instanceof Float) {
+          bundle.putFloat(entry.getKey(), (Float) entry.getValue());
+        }
+        else if(entry.getValue() instanceof Double) {
+          bundle.putDouble(entry.getKey(), (Double) entry.getValue());
+        }
+        else if(entry.getValue() instanceof Long) {
+          bundle.putLong(entry.getKey(), (Long) entry.getValue());
+        }
       }
+
     }
 
-    if(paramsString!=null){
-      for(Map.Entry<String, String> entry : paramsString.entrySet()) {
-        bundle.putString(entry.getKey(), entry.getValue());
-      }
-    }
 
     firebaseAnalytics.logEvent(eventName, bundle);
   }
