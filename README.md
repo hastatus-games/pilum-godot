@@ -12,7 +12,7 @@ Integration with:
 It was built using the project [Godot-Android-Samples](https://github.com/m4gr3d/Godot-Android-Samples) as a baseline to the project
 
 
-##Instalation
+## Instalation
 
 Inside **android/build** folder
 
