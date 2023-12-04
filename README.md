@@ -63,9 +63,19 @@ Edit your **android/build/AndroidManifest.xml**
         android:hasFragileUserData="false"
         android:requestLegacyExternalStorage="false"
         tools:ignore="GoogleAppIndexingWarning" >
+        
+        
+        ...
+        
+        
+        <meta-data android:name='com.facebook.sdk.AutoLogAppEventsEnabled' android:value='false'/>
+        <meta-data android:name="com.facebook.sdk.AutoInitEnabled" android:value="false"/>
+        <meta-data android:name="firebase_messaging_auto_init_enabled" android:value="false" />
+        <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
+        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
+        <meta-data android:name="firebase_performance_collection_enabled" android:value="false" />
 
 
-...
 
         <!--  AdMob App ID. -->
         <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
@@ -93,16 +103,17 @@ buildscript {
     dependencies {
         classpath libraries.androidGradlePlugin
         classpath libraries.kotlinGradlePlugin
-        classpath 'com.google.gms:google-services:4.3.15' // <==== ADD THIS
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.5' // <==== ADD THIS
+        classpath 'com.google.gms:google-services:4.3.15' // <==== ADD THIS to enable Admob Ads
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.5' // <==== ADD THIS to enable Firebase Crashlytics
+        classpath 'com.google.android.ump:user-messaging-platform:2.1.0' // <==== ADD THIS to enable GDPR
     }
 }
 
 ...
 //At the end of your build.gradle file
 
-apply plugin: 'com.google.gms.google-services' // <==== ADD THIS
-apply plugin: 'com.google.firebase.crashlytics'// <==== ADD THIS
+apply plugin: 'com.google.gms.google-services' // <==== ADD THIS to enbale Firebase
+apply plugin: 'com.google.firebase.crashlytics'// <==== ADD THIS to enable Crashlytics
 
 ```
 
