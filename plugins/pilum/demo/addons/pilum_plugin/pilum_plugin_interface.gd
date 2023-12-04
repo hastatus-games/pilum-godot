@@ -11,11 +11,18 @@ func _init():
 		printerr("Initialization error: unable to access the java logic")
 
 ## Toggle between showing and hiding the hello world text
-func testPlugin():
+func testPlugin(visible:bool):
 	if _pilum_singleton:
-		_pilum_singleton.testPlugin()
+		_pilum_singleton.testPlugin(visible)
 	else:
 		printerr("Initialization error")
+
+
+func loadAdAds(adUnitId:String)->bool:
+	if _pilum_singleton:
+		_pilum_singleton.loadAds()
+	else:
+		printerr("loadAdAds error")
 
 
 func registerForFirebase(firebaseError: Callable, admobInit: Callable)-> bool:
@@ -61,6 +68,7 @@ func registerEvent(event_name:String, params:Dictionary)->bool:
 		success = false
 
 	return success
+
 
 
 func loadAdInterstitial(adUnitId:String)->bool:
