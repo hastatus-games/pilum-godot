@@ -11,9 +11,9 @@ func _init():
 		printerr("Initialization error: unable to access the java logic")
 
 ## Toggle between showing and hiding the hello world text
-func helloWorld():
+func testPlugin():
 	if _pilum_singleton:
-		_pilum_singleton.helloWorld()
+		_pilum_singleton.testPlugin()
 	else:
 		printerr("Initialization error")
 
@@ -92,6 +92,20 @@ func registerEventWinBasicMatch(dificuldade:String, cenario:String, pontosJogado
 		success = false
 
 	return success
+
+
+func registerEvent(event_name:String, params_string:Dictionary, params_ints:Dictionary)->bool:
+	var success = true;
+	if _pilum_singleton:
+		_pilum_singleton.registerEvent(event_name, params_string, params_ints)
+	else:
+		printerr("Unable to registerEvent")
+		success = false
+
+	return success
+
+
+
 
 func loadAdInterstitial(adUnitId:String)->bool:
 	var success = true;
