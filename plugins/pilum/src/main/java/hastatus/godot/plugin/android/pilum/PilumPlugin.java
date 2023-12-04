@@ -53,6 +53,7 @@ public class PilumPlugin extends GodotPlugin {
 
   public PilumPlugin(Godot godot) {
     super(godot);
+    admobInitialized = new AtomicBoolean(false);
   }
 
 
@@ -69,7 +70,7 @@ public class PilumPlugin extends GodotPlugin {
 
     signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INIT_COMPLETE));
     signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_LOADED));
-    signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, Integer.class, String.class, String.class));
+    signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, Integer.class, String.class));
     signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_SHOW));
 
     signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_CLICKED));
@@ -93,10 +94,15 @@ public class PilumPlugin extends GodotPlugin {
   }
 
 
+
   @UsedByGodot
-  public void loadAds(boolean testMode, String testDeviceId) {
+  public void loadAds(final boolean testMode, final String testDeviceId) {
 
     consentInformation = UserMessagingPlatform.getConsentInformation(getActivity());
+
+    if (testMode) {
+      consentInformation.reset(); //reset to always ask
+    }
 
     consentGDPR(getActivity(), testMode, testDeviceId);
 
@@ -108,7 +114,7 @@ public class PilumPlugin extends GodotPlugin {
     }
   }
 
-  private void loadAdmobAds(boolean testMode, String testDeviceId){
+  private void loadAdmobAds(final boolean testMode, final String testDeviceId){
     if(admobInitialized.compareAndSet(false, true)) {
 
       if (testMode) {
@@ -179,12 +185,12 @@ public class PilumPlugin extends GodotPlugin {
               public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 // Handle the error
                 mInterstitialAd = null;
-                emitSignal(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, loadAdError.getCode(), loadAdError.getCause(), loadAdError.getMessage());
+                emitSignal(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, loadAdError.getCode(), loadAdError.getMessage());
 
               }
             }));
 
-    emitSignal(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, -42, "Admob disabled", "Pilum is not using Admob yet");
+    emitSignal(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, -42, "Pilum is not using Admob yet");
 
 
   }
@@ -292,8 +298,6 @@ public class PilumPlugin extends GodotPlugin {
     ConsentRequestParameters params;
     if (testMode) {
 
-      consentInformation.reset(); //reset to always ask
-
       //force geography area to GDPR
       ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(activity)
               .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
@@ -302,7 +306,6 @@ public class PilumPlugin extends GodotPlugin {
 
       params = new ConsentRequestParameters
               .Builder()
-
               .setConsentDebugSettings(debugSettings)
               .build();
     }
