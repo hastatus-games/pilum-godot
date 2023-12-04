@@ -29,7 +29,7 @@ import org.godotengine.godot.plugin.GodotPlugin;
 import org.godotengine.godot.plugin.SignalInfo;
 import org.godotengine.godot.plugin.UsedByGodot;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -92,7 +92,27 @@ public class PilumPlugin extends GodotPlugin {
     return view;
   }
 
+  @UsedByGodot
+  public void deleteFirebaseUserData(){
+    if(firebaseAnalytics!=null) {
+      firebaseAnalytics.resetAnalyticsData();
+    }
+  }
 
+  @UsedByGodot
+  public boolean clearAppData() {
+    boolean success = true;
+
+    // clearing app data
+    String packageName = getActivity().getApplicationContext().getPackageName();
+    Runtime runtime = Runtime.getRuntime();
+    try {
+      runtime.exec("pm clear "+packageName);
+    } catch (IOException e) {
+      success = false;
+    }
+    return success;
+  }
 
   @UsedByGodot
   public void loadNativeTools(final boolean testMode, final String testDeviceId) {
