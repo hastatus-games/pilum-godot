@@ -93,16 +93,17 @@ buildscript {
     dependencies {
         classpath libraries.androidGradlePlugin
         classpath libraries.kotlinGradlePlugin
-        classpath 'com.google.gms:google-services:4.3.15' // <==== ADD THIS
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.5' // <==== ADD THIS
+        classpath 'com.google.gms:google-services:4.3.15' // <==== ADD THIS to enable Admob Ads
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.5' // <==== ADD THIS to enable Firebase Crashlytics
+        classpath 'com.google.android.ump:user-messaging-platform:2.1.0' // <==== ADD THIS to enable GDPR
     }
 }
 
 ...
 //At the end of your build.gradle file
 
-apply plugin: 'com.google.gms.google-services' // <==== ADD THIS
-apply plugin: 'com.google.firebase.crashlytics'// <==== ADD THIS
+apply plugin: 'com.google.gms.google-services' // <==== ADD THIS to enbale Firebase
+apply plugin: 'com.google.firebase.crashlytics'// <==== ADD THIS to enable Crashlytics
 
 ```
 
