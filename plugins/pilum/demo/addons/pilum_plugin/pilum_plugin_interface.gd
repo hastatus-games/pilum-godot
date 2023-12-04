@@ -50,48 +50,6 @@ func registerForInterstitial(admobInterstitialLoaded: Callable, admobInterstitia
 
 	return success
 
-func registerEventStartMatch(dificuldade:String, cenario:String)->bool:
-	var success = true;
-	if _pilum_singleton:
-		_pilum_singleton.registerEventStartBasicMatch(dificuldade, cenario)
-	else:
-		printerr("Unable to registerEventStartBasicMatch")
-		success = false
-
-	return success
-
-
-
-func registerEventLoseBasicMatch(dificuldade:String, cenario:String, pontosJogador:int, pontosAdversario:int, acertosBolinha:int, errosBolinha:int)->bool:
-	var success = true;
-	if _pilum_singleton:
-		_pilum_singleton.registerEventLoseBasicMatch(dificuldade, cenario, pontosJogador, pontosAdversario, acertosBolinha, errosBolinha)
-	else:
-		printerr("Unable to registerEventLoseBasicMatch")
-		success = false
-
-	return success
-
-
-func registerEventAbandonBasicMatch(dificuldade:String, cenario:String, pontosJogador:int, pontosAdversario:int, acertosBolinha:int, errosBolinha:int)->bool:
-	var success = true;
-	if _pilum_singleton:
-		_pilum_singleton.registerEventAbandonBasicMatch(dificuldade, cenario, pontosJogador, pontosAdversario, acertosBolinha, errosBolinha)
-	else:
-		printerr("Unable to registerEventAbandonBasicMatch")
-		success = false
-
-	return success
-
-func registerEventWinBasicMatch(dificuldade:String, cenario:String, pontosJogador:int, pontosAdversario:int, acertosBolinha:int, errosBolinha:int)->bool:
-	var success = true;
-	if _pilum_singleton:
-		_pilum_singleton.registerEventWinBasicMatch(dificuldade, cenario, pontosJogador, pontosAdversario, acertosBolinha, errosBolinha)
-	else:
-		printerr("Unable to registerEventWinBasicMatch")
-		success = false
-
-	return success
 
 
 func registerEvent(event_name:String, params:Dictionary)->bool:
@@ -103,8 +61,6 @@ func registerEvent(event_name:String, params:Dictionary)->bool:
 		success = false
 
 	return success
-
-
 
 
 func loadAdInterstitial(adUnitId:String)->bool:

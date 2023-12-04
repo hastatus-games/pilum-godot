@@ -209,50 +209,6 @@ public class PilumPlugin extends GodotPlugin {
 
 
 
-  @UsedByGodot
-  private void registerEventStartBasicMatch(String dificuldade, String cenario) {
-    Bundle params = new Bundle();
-    params.putString("dificuldade", dificuldade);
-    params.putString("cenario", cenario);
-    firebaseAnalytics.logEvent("INICIOU_PARTIDA_BASICA", params);
-  }
-
-  @UsedByGodot
-  private void registerEventLoseBasicMatch(String dificuldade, String cenario, int pontosJogador, int pontosAdversario, int acertosBolinha, int tentativasAcertarBolinha) {
-    Bundle params = new Bundle();
-    params.putString("dificuldade", dificuldade);
-    params.putString("cenario", cenario);
-    params.putInt("pontos_jogador", pontosJogador);
-    params.putInt("pontos_adversario", pontosAdversario);
-    params.putInt("acertos_bolinha", acertosBolinha);
-    params.putInt("tentativas_acertar_bolinha", tentativasAcertarBolinha);
-    firebaseAnalytics.logEvent("PERDEU_PARTIDA_BASICA", params);
-  }
-
-  @UsedByGodot
-  private void registerEventAbandonBasicMatch(String dificuldade, String cenario, int pontosJogador, int pontosAdversario, int acertosBolinha, int tentativasAcertarBolinha) {
-    Bundle params = new Bundle();
-    params.putString("dificuldade", dificuldade);
-    params.putString("cenario", cenario);
-    params.putInt("pontos_jogador", pontosJogador);
-    params.putInt("pontos_adversario", pontosAdversario);
-    params.putInt("acertos_bolinha", acertosBolinha);
-    params.putInt("tentativas_acertar_bolinha", tentativasAcertarBolinha);
-    firebaseAnalytics.logEvent("ABANDONOU_PARTIDA_BASICA", params);
-  }
-
-  @UsedByGodot
-  private void registerEventWinBasicMatch(String dificuldade, String cenario, int pontosJogador, int pontosAdversario, int acertosBolinha, int tentativasAcertarBolinha) {
-    Bundle params = new Bundle();
-    params.putString("dificuldade", dificuldade);
-    params.putString("cenario", cenario);
-    params.putInt("pontos_jogador", pontosJogador);
-    params.putInt("pontos_adversario", pontosAdversario);
-    params.putInt("acertos_bolinha", acertosBolinha);
-    params.putInt("tentativas_acertar_bolinha", tentativasAcertarBolinha);
-    firebaseAnalytics.logEvent("GANHOU_PARTIDA_BASICA", params);
-  }
-
 
   @UsedByGodot
   private void registerEvent(String eventName, org.godotengine.godot.Dictionary params) {
