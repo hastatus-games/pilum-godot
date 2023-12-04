@@ -11,8 +11,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -23,6 +21,7 @@ import org.godotengine.godot.plugin.SignalInfo;
 import org.godotengine.godot.plugin.UsedByGodot;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class PilumPlugin extends GodotPlugin {
@@ -50,7 +49,9 @@ public class PilumPlugin extends GodotPlugin {
     super(godot);
   }
 
+
   @Override
+  @NonNull
   public String getPluginName() {
     return "Pilum";
   }
@@ -79,12 +80,9 @@ public class PilumPlugin extends GodotPlugin {
   public View onMainCreate(Activity activity) {
     firebaseAnalytics = FirebaseAnalytics.getInstance(activity);
 
-    MobileAds.initialize(activity, new OnInitializationCompleteListener() {
-      @Override
-      public void onInitializationComplete(InitializationStatus initializationStatus){
-        emitSignal(SIGNAL_ADMOB_INIT_COMPLETE);
-        admobLoaded = true;
-      }
+    MobileAds.initialize(activity, initializationStatus -> {
+      emitSignal(SIGNAL_ADMOB_INIT_COMPLETE);
+      admobLoaded = true;
     });
 
     View view = activity.getLayoutInflater().inflate(R.layout.hello_world_view, null);
@@ -96,7 +94,7 @@ public class PilumPlugin extends GodotPlugin {
    * Show/hide, print and return "Hello World".
    */
   @UsedByGodot
-  public String helloWorld() {
+  public String testPlugin() {
     if (helloWorldContainer != null) {
       helloWorldContainer.post(() -> {
         if (helloWorldContainer.getVisibility() == View.VISIBLE) {
@@ -126,28 +124,27 @@ public class PilumPlugin extends GodotPlugin {
   private void loadAdIntersticial(String adUnitId) {
     AdRequest adRequest = new AdRequest.Builder().build();
 
-    getActivity().runOnUiThread(()-> {
-      InterstitialAd.load(getActivity(), adUnitId, adRequest,
-              new InterstitialAdLoadCallback() {
-                @Override
-                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                  // The mInterstitialAd reference will be null until
-                  // an ad is loaded.
-                  mInterstitialAd = interstitialAd;
-                  emitSignal(SIGNAL_ADMOB_INTERSTITIAL_LOADED);
-                }
+    getActivity().runOnUiThread(()->
+            InterstitialAd.load(getActivity(), adUnitId, adRequest,
+            new InterstitialAdLoadCallback() {
+              @Override
+              public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                // The mInterstitialAd reference will be null until
+                // an ad is loaded.
+                mInterstitialAd = interstitialAd;
+                emitSignal(SIGNAL_ADMOB_INTERSTITIAL_LOADED);
+              }
 
-                @Override
-                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                  // Handle the error
-                  mInterstitialAd = null;
-                  emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, Integer.valueOf(loadAdError.getCode()), loadAdError.getCause(), loadAdError.getMessage());
+              @Override
+              public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                // Handle the error
+                mInterstitialAd = null;
+                emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, loadAdError.getCode(), loadAdError.getCause(), loadAdError.getMessage());
 
-                }
-              });
-    });
+              }
+            }));
 
-    emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, Integer.valueOf(-42), "Admob disabled", "Pilum is not using Admob yet");
+    emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, -42, "Admob disabled", "Pilum is not using Admob yet");
 
 
   }
@@ -179,7 +176,7 @@ public class PilumPlugin extends GodotPlugin {
         }
 
         @Override
-        public void onAdFailedToShowFullScreenContent(AdError adError) {
+        public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
           // Called when ad fails to show.
           emitSignal(SIGNAL_ADMOB_INTERSTITIAL_FAILED_TO_SHOW_FULLSCREEN_CONTENT, adError.getCode(), adError.getCause(), adError.getMessage());
           mInterstitialAd = null;
@@ -198,7 +195,10 @@ public class PilumPlugin extends GodotPlugin {
         }
       });
 
-      getActivity().runOnUiThread(()-> mInterstitialAd.show(getActivity()));
+      final Activity activity = getActivity();
+      if(activity!=null && !activity.isFinishing()) {
+        getActivity().runOnUiThread(() -> mInterstitialAd.show(getActivity()));
+      }
 
 
     } else {
@@ -208,49 +208,38 @@ public class PilumPlugin extends GodotPlugin {
   }
 
 
-  @UsedByGodot
-  private void registerEventStartBasicMatch(String dificuldade, String cenario) {
-    Bundle params = new Bundle();
-    params.putString("dificuldade", dificuldade);
-    params.putString("cenario", cenario);
-    firebaseAnalytics.logEvent("INICIOU_PARTIDA_BASICA", params);
-  }
+
 
   @UsedByGodot
-  private void registerEventLoseBasicMatch(String dificuldade, String cenario, int pontosJogador, int pontosAdversario, int acertosBolinha, int tentativasAcertarBolinha) {
-    Bundle params = new Bundle();
-    params.putString("dificuldade", dificuldade);
-    params.putString("cenario", cenario);
-    params.putInt("pontos_jogador", pontosJogador);
-    params.putInt("pontos_adversario", pontosAdversario);
-    params.putInt("acertos_bolinha", acertosBolinha);
-    params.putInt("tentativas_acertar_bolinha", tentativasAcertarBolinha);
-    firebaseAnalytics.logEvent("PERDEU_PARTIDA_BASICA", params);
+  private void registerEvent(String eventName, org.godotengine.godot.Dictionary params) {
+    Bundle bundle = new Bundle();
+
+    if(params!=null) {
+      Set<Map.Entry<String, Object>> entrySet = params.entrySet();
+      for (Map.Entry<String, Object> entry : entrySet) {
+        if(entry.getValue() instanceof String) {
+          bundle.putString(entry.getKey(), (String)entry.getValue());
+        }
+        else if(entry.getValue() instanceof Integer) {
+          bundle.putInt(entry.getKey(), (Integer)entry.getValue());
+        }
+        else if(entry.getValue() instanceof Boolean) {
+          bundle.putBoolean(entry.getKey(), (Boolean) entry.getValue());
+        }
+        else if(entry.getValue() instanceof Float) {
+          bundle.putFloat(entry.getKey(), (Float) entry.getValue());
+        }
+        else if(entry.getValue() instanceof Double) {
+          bundle.putDouble(entry.getKey(), (Double) entry.getValue());
+        }
+        else if(entry.getValue() instanceof Long) {
+          bundle.putLong(entry.getKey(), (Long) entry.getValue());
+        }
+      }
+
+    }
+
+
+    firebaseAnalytics.logEvent(eventName, bundle);
   }
-
-  @UsedByGodot
-  private void registerEventAbandonBasicMatch(String dificuldade, String cenario, int pontosJogador, int pontosAdversario, int acertosBolinha, int tentativasAcertarBolinha) {
-    Bundle params = new Bundle();
-    params.putString("dificuldade", dificuldade);
-    params.putString("cenario", cenario);
-    params.putInt("pontos_jogador", pontosJogador);
-    params.putInt("pontos_adversario", pontosAdversario);
-    params.putInt("acertos_bolinha", acertosBolinha);
-    params.putInt("tentativas_acertar_bolinha", tentativasAcertarBolinha);
-    firebaseAnalytics.logEvent("ABANDONOU_PARTIDA_BASICA", params);
-  }
-
-  @UsedByGodot
-  private void registerEventWinBasicMatch(String dificuldade, String cenario, int pontosJogador, int pontosAdversario, int acertosBolinha, int tentativasAcertarBolinha) {
-    Bundle params = new Bundle();
-    params.putString("dificuldade", dificuldade);
-    params.putString("cenario", cenario);
-    params.putInt("pontos_jogador", pontosJogador);
-    params.putInt("pontos_adversario", pontosAdversario);
-    params.putInt("acertos_bolinha", acertosBolinha);
-    params.putInt("tentativas_acertar_bolinha", tentativasAcertarBolinha);
-    firebaseAnalytics.logEvent("GANHOU_PARTIDA_BASICA", params);
-  }
-
-
 }

@@ -11,9 +11,9 @@ func _init():
 		printerr("Initialization error: unable to access the java logic")
 
 ## Toggle between showing and hiding the hello world text
-func helloWorld():
+func testPlugin():
 	if _pilum_singleton:
-		_pilum_singleton.helloWorld()
+		_pilum_singleton.testPlugin()
 	else:
 		printerr("Initialization error")
 
@@ -50,48 +50,18 @@ func registerForInterstitial(admobInterstitialLoaded: Callable, admobInterstitia
 
 	return success
 
-func registerEventStartMatch(dificuldade:String, cenario:String)->bool:
+
+
+func registerEvent(event_name:String, params:Dictionary)->bool:
 	var success = true;
 	if _pilum_singleton:
-		_pilum_singleton.registerEventStartBasicMatch(dificuldade, cenario)
+		_pilum_singleton.registerEvent(event_name, params)
 	else:
-		printerr("Unable to registerEventStartBasicMatch")
+		printerr("Unable to registerEvent")
 		success = false
 
 	return success
 
-
-
-func registerEventLoseBasicMatch(dificuldade:String, cenario:String, pontosJogador:int, pontosAdversario:int, acertosBolinha:int, errosBolinha:int)->bool:
-	var success = true;
-	if _pilum_singleton:
-		_pilum_singleton.registerEventLoseBasicMatch(dificuldade, cenario, pontosJogador, pontosAdversario, acertosBolinha, errosBolinha)
-	else:
-		printerr("Unable to registerEventLoseBasicMatch")
-		success = false
-
-	return success
-
-
-func registerEventAbandonBasicMatch(dificuldade:String, cenario:String, pontosJogador:int, pontosAdversario:int, acertosBolinha:int, errosBolinha:int)->bool:
-	var success = true;
-	if _pilum_singleton:
-		_pilum_singleton.registerEventAbandonBasicMatch(dificuldade, cenario, pontosJogador, pontosAdversario, acertosBolinha, errosBolinha)
-	else:
-		printerr("Unable to registerEventAbandonBasicMatch")
-		success = false
-
-	return success
-
-func registerEventWinBasicMatch(dificuldade:String, cenario:String, pontosJogador:int, pontosAdversario:int, acertosBolinha:int, errosBolinha:int)->bool:
-	var success = true;
-	if _pilum_singleton:
-		_pilum_singleton.registerEventWinBasicMatch(dificuldade, cenario, pontosJogador, pontosAdversario, acertosBolinha, errosBolinha)
-	else:
-		printerr("Unable to registerEventWinBasicMatch")
-		success = false
-
-	return success
 
 func loadAdInterstitial(adUnitId:String)->bool:
 	var success = true;
