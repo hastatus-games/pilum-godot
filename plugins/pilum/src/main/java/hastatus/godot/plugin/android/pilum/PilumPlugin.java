@@ -22,6 +22,7 @@ import com.google.android.ump.ConsentRequestParameters;
 import com.google.android.ump.FormError;
 import com.google.android.ump.UserMessagingPlatform;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import org.godotengine.godot.Godot;
 import org.godotengine.godot.plugin.GodotPlugin;
@@ -86,8 +87,6 @@ public class PilumPlugin extends GodotPlugin {
 
   @Override
   public View onMainCreate(Activity activity) {
-    firebaseAnalytics = FirebaseAnalytics.getInstance(activity);
-
     View view = activity.getLayoutInflater().inflate(R.layout.hello_world_view, null);
     testContainer = view.findViewById(R.id.hello_world_container);
     return view;
@@ -96,21 +95,30 @@ public class PilumPlugin extends GodotPlugin {
 
 
   @UsedByGodot
-  public void loadAds(final boolean testMode, final String testDeviceId) {
+  public void loadNativeTools(final boolean testMode, final String testDeviceId) {
+    final Activity activity = getActivity();
 
-    consentInformation = UserMessagingPlatform.getConsentInformation(getActivity());
+    if(activity!=null && !activity.isFinishing()) {
 
-    if (testMode) {
-      consentInformation.reset(); //reset to always ask
-    }
+      FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG);
+      FirebaseAnalytics.getInstance(activity).setAnalyticsCollectionEnabled(true);
 
-    consentGDPR(getActivity(), testMode, testDeviceId);
+      firebaseAnalytics = FirebaseAnalytics.getInstance(activity);
 
-    // Check if you can initialize the Google Mobile Ads SDK in parallel
-    // while checking for new consent information. Consent obtained in
-    // the previous session can be used to request ads.
-    if (consentInformation.canRequestAds()) {
-      loadAdmobAds(testMode, testDeviceId);
+      consentInformation = UserMessagingPlatform.getConsentInformation(activity);
+
+      if (testMode) {
+        consentInformation.reset(); //reset to always ask
+      }
+
+      consentGDPR(activity, testMode, testDeviceId);
+
+      // Check if you can initialize the Google Mobile Ads SDK in parallel
+      // while checking for new consent information. Consent obtained in
+      // the previous session can be used to request ads.
+      if (consentInformation.canRequestAds()) {
+        loadAdmobAds(testMode, testDeviceId);
+      }
     }
   }
 

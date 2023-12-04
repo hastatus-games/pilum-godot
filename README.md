@@ -63,9 +63,19 @@ Edit your **android/build/AndroidManifest.xml**
         android:hasFragileUserData="false"
         android:requestLegacyExternalStorage="false"
         tools:ignore="GoogleAppIndexingWarning" >
+        
+        
+        ...
+        
+        
+        <meta-data android:name='com.facebook.sdk.AutoLogAppEventsEnabled' android:value='false'/>
+        <meta-data android:name="com.facebook.sdk.AutoInitEnabled" android:value="false"/>
+        <meta-data android:name="firebase_messaging_auto_init_enabled" android:value="false" />
+        <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
+        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
+        <meta-data android:name="firebase_performance_collection_enabled" android:value="false" />
 
 
-...
 
         <!--  AdMob App ID. -->
         <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->

@@ -18,10 +18,10 @@ func testPlugin(visible:bool)->void:
 		printerr("Initialization error")
 
 
-func loadAds(test_mode:bool, test_device_id:String)->bool:
+func loadNativeTools(test_mode:bool, test_device_id:String)->bool:
 	var success = true;
 	if _pilum_singleton:
-		_pilum_singleton.loadAds(test_mode, test_device_id)
+		_pilum_singleton.loadNativeTools(test_mode, test_device_id)
 	else:
 		printerr("loadAdAds error")
 		success = false
