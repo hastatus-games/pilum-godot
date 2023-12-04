@@ -28,6 +28,16 @@ func loadNativeTools(test_mode:bool, test_device_id:String)->bool:
 
 	return success
 
+func deleteAllUserData()->bool:
+	var success = true;
+	if _pilum_singleton:
+		_pilum_singleton.deleteFirebaseUserData()
+		success = _pilum_singleton.clearAppData()
+	else:
+		printerr("deleteAllUserData error")
+		success = false
+	return success
+
 
 func registerForFirebase(firebaseError: Callable, admobInit: Callable, gdprConsentError: Callable)-> bool:
 	var success = true;
