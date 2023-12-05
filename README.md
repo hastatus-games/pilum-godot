@@ -87,12 +87,52 @@ buildscript {
     dependencies {
         classpath libraries.androidGradlePlugin
         classpath libraries.kotlinGradlePlugin
-        classpath 'com.google.gms:google-services:4.3.15' // <==== ADD THIS to enable Admob Ads
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.5' // <==== ADD THIS to enable Firebase Crashlytics
-        classpath 'com.google.android.ump:user-messaging-platform:2.1.0' // <==== ADD THIS to enable GDPR
+        classpath 'com.google.gms:google-services:4.3.15'                    // <==== ADD This
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.5'    // <==== ADD This
     }
 }
 
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+
+}
+
+apply from: 'config.gradle'
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+
+        // Godot user plugins custom maven repos
+        String[] mavenRepos = getGodotPluginsMavenRepos()
+        if (mavenRepos != null && mavenRepos.size() > 0) {
+            for (String repoUrl : mavenRepos) {
+                maven {
+                    url repoUrl
+                }
+            }
+        }
+    }
+}
+
+configurations {
+    // Initializes a placeholder for the devImplementation dependency configuration.
+    devImplementation {}
+}
+
+dependencies {
+    implementation libraries.kotlinStdLib
+    implementation libraries.androidxFragment
+
+    implementation platform("com.google.firebase:firebase-bom:32.3.1")
+    implementation 'com.google.firebase:firebase-crashlytics'                // <==== ADD This
+    implementation "com.google.firebase:firebase-analytics"                  // <==== ADD This
+    implementation "com.google.android.gms:play-services-ads:22.5.0"         // <==== ADD This
+
+  
+    if (rootProject.findProject(":lib")) {
 ...
 //At the end of your build.gradle file
 
