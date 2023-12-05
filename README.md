@@ -123,4 +123,25 @@ Inside **android/build** copy and paste your **google-services.json**
 
 
 
+### Build the Plugin
+
+### Building the Hello World plugin
+
+Use the following commands to build the plugin:
+
+```
+cd pilum-godot
+./gradlew :plugins:pilum:assemble
+```
+
+### Enable the plugin
+
+Inside your Godot 4.2+ project create the folder **addons** if it doesn't exist
+
+Copy the folder **pilum-godot/plugins/pilum/demo/addons/pilum_plugin** to your Godot4.2+ folder **addons**
+
+Enable the plugin in Godot4.2+: **Project -> Project Settings... -> Plugins (tab)**
+
+
+
 
