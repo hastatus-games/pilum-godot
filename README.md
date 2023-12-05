@@ -130,8 +130,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics'                // <==== ADD This
     implementation "com.google.firebase:firebase-analytics"                  // <==== ADD This
     implementation "com.google.android.gms:play-services-ads:22.5.0"         // <==== ADD This
+    implementation 'com.google.android.ump:user-messaging-platform:2.1.0'    // <==== ADD This
 
-  
     if (rootProject.findProject(":lib")) {
 ...
 //At the end of your build.gradle file
