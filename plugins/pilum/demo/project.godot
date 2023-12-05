@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Hello World Plugin Demo"
+config/name="Pilum Plugin Demo"
 run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.2")
 config/icon="res://icon.png"
@@ -21,7 +21,7 @@ settings/stdout/verbose_stdout=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/hello_world_plugin/plugin.cfg")
+enabled=PackedStringArray("res://addons/pilum_plugin/plugin.cfg")
 
 [rendering]
 
