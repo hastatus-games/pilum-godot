@@ -16,7 +16,7 @@ It was built using the project [Godot-Android-Samples](https://github.com/m4gr3d
 
 Inside **android/build** folder
 
-### Add permissions
+### Add permissions, APPLICATION_ID and collection_enabled default to FALSE adressing GDPR
 
 Edit your **android/build/AndroidManifest.xml**
 
@@ -32,8 +32,7 @@ Edit your **android/build/AndroidManifest.xml**
 
     ...
 
-    <!-- ADD this permissions -->
-    
+    <!-- ADD this permissions -->    
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -41,20 +40,8 @@ Edit your **android/build/AndroidManifest.xml**
     <!-- END permissions -->
 
     ...
-```
-### Add Admob com.google.android.gms.ads.APPLICATION_ID
-```
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.godot.game"
-    android:versionCode="1"
-    android:versionName="1.0"
-    android:installLocation="auto" >
-
-...
-
-<application
+    <application
         android:label="@string/godot_project_name_string"
         android:allowBackup="false"
         android:icon="@mipmap/icon"
@@ -67,14 +54,9 @@ Edit your **android/build/AndroidManifest.xml**
         
         ...
         
-        
-        <meta-data android:name='com.facebook.sdk.AutoLogAppEventsEnabled' android:value='false'/>
-        <meta-data android:name="com.facebook.sdk.AutoInitEnabled" android:value="false"/>
-        <meta-data android:name="firebase_messaging_auto_init_enabled" android:value="false" />
+        <!-- SET the collection_enabled to false adressing GDPR -->
         <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
-        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
-        <meta-data android:name="firebase_performance_collection_enabled" android:value="false" />
-
+        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />        
 
 
         <!--  AdMob App ID. -->
@@ -84,6 +66,8 @@ Edit your **android/build/AndroidManifest.xml**
             android:value="ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy"/>
 
 ...
+
+
 ```
 
 ### Add Dependecies
