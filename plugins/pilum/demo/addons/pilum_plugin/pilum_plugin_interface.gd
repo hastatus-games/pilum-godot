@@ -104,4 +104,13 @@ func showAdInterstitialLoaded()->bool:
 		printerr("Unable to showAdInterstitialLoaded")
 		success = false
 
-	return success		
+	return success
+
+func checkInternetConnection()->bool:
+	var connected = false
+	if _pilum_singleton:
+		connected = _pilum_singleton.isConnected()
+	else:
+		printerr("Unable to check internet connection")
+
+	return connected

@@ -1,6 +1,9 @@
 package hastatus.godot.plugin.android.pilum;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -282,6 +285,25 @@ public class PilumPlugin extends GodotPlugin {
   }
 
 
+  @UsedByGodot
+  public boolean isConnected() {
+    boolean connected = false;
+
+    final Activity activity = getActivity();
+
+    if(activity!=null && !activity.isFinishing()) {
+
+
+      ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+      NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+      if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+        connected = true;
+      }
+    }
+
+    return connected;
+  }
 
 
   @UsedByGodot
