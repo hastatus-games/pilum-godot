@@ -74,6 +74,21 @@ func registerForInterstitial(admobInterstitialLoaded: Callable, admobInterstitia
 
 
 
+func registerForRewarded(admobRewardedLoaded: Callable, admobRewardedFailedToLoad: Callable, admobReward: Callable)-> bool:
+	var success = true;
+	if _pilum_singleton:
+		_pilum_singleton.connect("AdmobRewardedLoaded", admobRewardedLoaded)
+		_pilum_singleton.connect("AdmobRewardedFailToLoad", admobRewardedFailedToLoad)
+		_pilum_singleton.connect("AdmobRewarded", admobReward)
+	else:
+		printerr("Unable to register for registerForRewarded")
+	success = false
+
+	return success
+
+
+
+
 func registerEvent(event_name:String, params:Dictionary)->bool:
 	var success = true;
 	if _pilum_singleton:
@@ -85,6 +100,26 @@ func registerEvent(event_name:String, params:Dictionary)->bool:
 	return success
 
 
+func loadAdRewarded(adUnitId:String)->bool:
+	var success = true;
+	if _pilum_singleton:
+		_pilum_singleton.loadRewarded(adUnitId)
+	else:
+		printerr("Unable to loadAdRewarded")
+		success = false
+
+	return success
+
+
+func showAdRewardedLoaded()->bool:
+	var success = true;
+	if _pilum_singleton:
+		_pilum_singleton.showLoadedRewadedAd()
+	else:
+		printerr("Unable to showLoadedRewadedAd")
+		success = false
+
+	return success
 
 func loadAdInterstitial(adUnitId:String)->bool:
 	var success = true;

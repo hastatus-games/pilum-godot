@@ -19,6 +19,8 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.gms.ads.rewarded.RewardedAd;
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.ump.ConsentDebugSettings;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.ConsentRequestParameters;
@@ -47,7 +49,7 @@ public class PilumPlugin extends GodotPlugin {
   private static final String PLUGIN_NAME = "Pilum";
   private FirebaseAnalytics firebaseAnalytics;
   private InterstitialAd mInterstitialAd;
-
+  private RewardedAd mRewardedAd;
   private ConsentInformation consentInformation;
   private View testContainer;
   private boolean admobLoaded;
@@ -74,8 +76,20 @@ public class PilumPlugin extends GodotPlugin {
 
     signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INIT_COMPLETE));
     signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_LOADED));
+    signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_REWARDED_LOADED));
+    signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_REWARDED, String.class, Integer.class ));
     signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, Integer.class, String.class));
+    signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_REWARDED_FAIL_TO_LOAD, Integer.class, String.class));
     signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_SHOW));
+
+
+
+    signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_REWARDED_CLICKED));
+    signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_REWARDED_DISMISSED_FULLSCREEN_CONTENT));
+    signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_REWARDED_FAILED_SHOW_FULLSCREEN_CONTENT));
+    signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_REWARDED_IMPRESSION));
+    signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_REWARDED_SHOWED_FULLSCREEN_CONTENT));
+
 
     signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_CLICKED));
     signals.add(new SignalInfo(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_DISMISSED_FULLSCREEN_CONTENT));
@@ -165,6 +179,86 @@ public class PilumPlugin extends GodotPlugin {
   }
 
 
+  @UsedByGodot
+  public void loadRewarded(final String rewardedId){
+    AdRequest adRequest = new AdRequest.Builder().build();
+
+    final Activity activity = getActivity();
+    if(activity!=null && !activity.isFinishing()) {
+
+      RewardedAd.load(getActivity(), rewardedId,
+        adRequest, new RewardedAdLoadCallback() {
+        @Override
+        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+          // Handle the error.
+          emitSignal(PilumSignals.SIGNAL_ADMOB_REWARDED_FAIL_TO_LOAD, loadAdError.getCode(), loadAdError.getMessage());
+          mRewardedAd = null;
+        }
+
+        @Override
+        public void onAdLoaded(@NonNull RewardedAd ad) {
+          mRewardedAd = ad;
+          emitSignal(PilumSignals.SIGNAL_ADMOB_REWARDED_LOADED);
+        }
+      });
+    }
+
+  }
+
+  @UsedByGodot
+  public void showLoadedRewadedAd() {
+    final Activity activity = getActivity();
+
+
+    if(mRewardedAd!=null && activity!=null && !activity.isFinishing()) {
+      mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+        @Override
+        public void onAdClicked() {
+          // Called when a click is recorded for an ad.
+          emitSignal(PilumSignals.SIGNAL_ADMOB_REWARDED_CLICKED);
+        }
+
+        @Override
+        public void onAdDismissedFullScreenContent() {
+          // Called when ad is dismissed.
+          // Set the ad reference to null so you don't show the ad a second time.
+          emitSignal(PilumSignals.SIGNAL_ADMOB_REWARDED_DISMISSED_FULLSCREEN_CONTENT);
+          mRewardedAd = null;
+        }
+
+        @Override
+        public void onAdFailedToShowFullScreenContent(AdError adError) {
+          // Called when ad fails to show.
+          emitSignal(PilumSignals.SIGNAL_ADMOB_REWARDED_FAILED_SHOW_FULLSCREEN_CONTENT);
+          mRewardedAd = null;
+        }
+
+        @Override
+        public void onAdImpression() {
+          // Called when an impression is recorded for an ad.
+          emitSignal(PilumSignals.SIGNAL_ADMOB_REWARDED_IMPRESSION);
+        }
+
+        @Override
+        public void onAdShowedFullScreenContent() {
+          // Called when ad is shown.
+          emitSignal(PilumSignals.SIGNAL_ADMOB_REWARDED_SHOWED_FULLSCREEN_CONTENT);
+        }
+      });
+
+
+      mRewardedAd.show(activity, rewardItem -> {
+        // Handle the reward.
+        emitSignal(PilumSignals.SIGNAL_ADMOB_REWARDED, rewardItem.getType(), rewardItem.getAmount());
+      });
+
+    }
+    else {
+      emitSignal(PilumSignals.SIGNAL_ADMOB_REWARDED_FAILED_SHOW_FULLSCREEN_CONTENT);
+    }
+
+
+  }
   /**
    * Show/hide, print and return "Hello World".
    */
@@ -198,7 +292,7 @@ public class PilumPlugin extends GodotPlugin {
 
 
   @UsedByGodot
-  private void loadAdIntersticial(String adUnitId) {
+  public void loadAdIntersticial(String adUnitId) {
     AdRequest adRequest = new AdRequest.Builder().build();
 
     getActivity().runOnUiThread(()->
@@ -223,17 +317,16 @@ public class PilumPlugin extends GodotPlugin {
 
     emitSignal(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_LOAD, -42, "Pilum is not using Admob yet");
 
-
   }
 
 
   @UsedByGodot
-  private boolean isAdmobLoaded() {
+  public boolean isAdmobLoaded() {
     return this.admobLoaded;
 
   }
   @UsedByGodot
-  private void showAdIntersticialLoaded() {
+  public void showAdIntersticialLoaded() {
 
     if (mInterstitialAd != null) {
       mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
@@ -276,12 +369,9 @@ public class PilumPlugin extends GodotPlugin {
       if(activity!=null && !activity.isFinishing()) {
         getActivity().runOnUiThread(() -> mInterstitialAd.show(getActivity()));
       }
-
-
     } else {
       emitSignal(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_SHOW);
     }
-    emitSignal(PilumSignals.SIGNAL_ADMOB_INTERSTITIAL_FAIL_TO_SHOW);
   }
 
 
@@ -307,7 +397,7 @@ public class PilumPlugin extends GodotPlugin {
 
 
   @UsedByGodot
-  private void registerEvent(String eventName, org.godotengine.godot.Dictionary params) {
+  public void registerEvent(String eventName, org.godotengine.godot.Dictionary params) {
     Bundle bundle = new Bundle();
 
     if(params!=null) {
