@@ -44,7 +44,7 @@ import hastatus.godot.plugin.android.pilum.signals.PilumSignals;
 
 public class PilumPlugin extends GodotPlugin {
 
-
+  private static final String PLUGIN_NAME = "Pilum";
   private FirebaseAnalytics firebaseAnalytics;
   private InterstitialAd mInterstitialAd;
 
@@ -64,7 +64,7 @@ public class PilumPlugin extends GodotPlugin {
   @Override
   @NonNull
   public String getPluginName() {
-    return "Pilum";
+    return PLUGIN_NAME;
   }
 
   @NonNull
@@ -369,6 +369,7 @@ public class PilumPlugin extends GodotPlugin {
     }
 
 
+    // Consent gathering failed.
     consentInformation.requestConsentInfoUpdate(
             activity,
             params,
@@ -386,10 +387,7 @@ public class PilumPlugin extends GodotPlugin {
                       }
                     }
             ),
-            requestConsentError -> {
-              // Consent gathering failed.
-              errorGDPRUserConsent( requestConsentError);
-            });
+            this::errorGDPRUserConsent);
 
 
   }
@@ -403,4 +401,6 @@ public class PilumPlugin extends GodotPlugin {
     emitSignal(PilumSignals.SIGNAL_ADMOB_ERROR_GDPR_CONSENT, formError.getErrorCode(), formError.getMessage());
 
   }
+
+
 }
